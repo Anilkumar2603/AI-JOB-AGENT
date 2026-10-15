@@ -10,9 +10,11 @@
     "worker": "tsx worker/index.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1152.0",
     "@prisma/adapter-pg": "^6.19.3",
     "@prisma/client": "^6.19.3",
     "next": "16.4.0",
+    "pdf-parse": "^1.1.1",
     "pg": "^8.23.1",
     "prisma": "^6.19.3",
     "react": "19.3.0",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
+    "@types/pdf-parse": "^1.1.5",
     "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",

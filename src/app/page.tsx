@@ -67,3 +67,5 @@ export default function Home() {
     </div>
   );
 }
+//npm install @aws-sdk/client-s3 pdf-parse@1.1.1
+//npm install -D @types/pdf-parse

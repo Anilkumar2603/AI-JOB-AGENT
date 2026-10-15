@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-
+import ResumeManager from "@/components/resume-manager";
 type Profile = {
   id?: string;
   fullName: string;
@@ -678,7 +678,7 @@ export default function ProfilePage() {
                 </div>
               </form>
             )}
-
+            {!loading && <ResumeManager />}
             <footer className="pb-6 text-center text-xs text-slate-400">
               CareerPilot · Your profile, your facts, your decisions.
             </footer>

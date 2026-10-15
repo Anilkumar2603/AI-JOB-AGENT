@@ -89,23 +89,23 @@ enum SyncTrigger {
 }
 
 model CandidateProfile {
-  id          String   @id @default(cuid())
-  fullName    String
-  email       String   @unique
-  phone       String?
-  location    String?
-  summary     String   @default("")
-  skills      String[] @default([])
-  experience  Json
-  projects    Json
-  education   Json
-  preferences Json
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  targetRoles   TargetRole[]
-  applications  Application[]
-  reviewBatches ReviewBatch[]
+  id              String           @id @default(cuid())
+  fullName        String
+  email           String           @unique
+  phone           String?
+  location        String?
+  summary         String           @default("")
+  skills          String[]         @default([])
+  experience      Json
+  projects        Json
+  education       Json
+  preferences     Json
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  uploadedResumes UploadedResume[]
+  targetRoles     TargetRole[]
+  applications    Application[]
+  reviewBatches   ReviewBatch[]
 }
 
 model TargetRole {
@@ -327,6 +327,7 @@ model AuditEvent {
   @@index([entityType, entityId, createdAt])
   @@index([eventType, createdAt])
 }
+
 enum TaskStatus {
   QUEUED
   RUNNING
@@ -337,29 +338,53 @@ enum TaskStatus {
 }
 
 model BackgroundTask {
-  id          String     @id @default(cuid())
-  type        String
-  status      TaskStatus @default(QUEUED)
+  id     String     @id @default(cuid())
+  type   String
+  status TaskStatus @default(QUEUED)
 
   // Small JSON input for the worker; store large files separately.
-  payload     Json
-  result      Json?
+  payload Json
+  result  Json?
 
   // Retry and recovery state.
-  attempts    Int        @default(0)
-  maxAttempts Int        @default(5)
-  runAt       DateTime   @default(now())
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5)
+  runAt       DateTime  @default(now())
   lockedAt    DateTime?
   lockedBy    String?
   lastError   String?
 
   // Lifecycle timestamps.
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  startedAt   DateTime?
-  finishedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  startedAt  DateTime?
+  finishedAt DateTime?
 
   @@index([status, runAt, createdAt])
   @@index([lockedAt])
   @@index([type, status, createdAt])
+}
+
+enum ResumeUploadStatus {
+  READY
+  FAILED
+}
+
+model UploadedResume {
+  id            String             @id @default(cuid())
+  profileId     String
+  originalName  String
+  mimeType      String             @default("application/pdf")
+  sizeBytes     Int
+  storageKey    String             @unique
+  extractedText String             @db.Text
+  status        ResumeUploadStatus @default(READY)
+  errorMessage  String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  profile CandidateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, createdAt])
+  @@index([profileId, status])
 }
